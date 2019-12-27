@@ -66,6 +66,7 @@ export default {
       fetch(`${baseUrl}/newretail/api/sms/sendSms`, {
         method: "POST",
         headers: {
+          "token":this.token,
           "Content-Type": "application/json"
         },
         body: JSON.stringify({ mobile })
@@ -122,15 +123,13 @@ export default {
       })
         .then(res => res.json())
         .then(res => {
-          this.$root.load.hide();
           if (res.code === 0) {
-            this.$root.toast.showToast(res.message);
+            this.$root.toast.showToast("绑定成功");
           } else {
             this.$root.toast.showToast(res.message);
           }
         })
         .catch(err => {
-          this.$root.load.hide();
           this.$root.toast.showToast(err);
         })
         .finally(r => {
