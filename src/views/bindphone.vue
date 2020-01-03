@@ -13,13 +13,14 @@
           <input type="number" @blur="scroll0" placeholder="请输入验证码" v-model="captcha" />
           <div class="count" @click="getMsg">{{seconds}}</div>
         </div>
+        <!-- {{$route.query}} -->
         <div class="btn" @click="bind">确认绑定</div>
         <!-- <div class="tip" v-if="hasBind">当前该帐号尚未绑定手机号</div>
         <div class="tip" v-else>
           绑定手机号：
           <span class="phone">{{phone|phoneFilter}}</span>
           <span class="cancel" @click="modalShow=true">取消绑定</span>
-        </div> -->
+        </div>-->
       </div>
     </div>
     <modal :show.sync="modalShow" content="取消绑定后将不会再收到推送消息" @confirm="disBindPhone"></modal>
@@ -41,7 +42,7 @@ export default {
       phone: "",
       avatar: "",
       nickName: "",
-      openId: "",
+      openid: "",
       token: "",
       modalShow: false
     };
@@ -66,7 +67,7 @@ export default {
       fetch(`${baseUrl}/newretail/api/sms/sendSms`, {
         method: "POST",
         headers: {
-          "token":this.token,
+          token: this.token,
           "Content-Type": "application/json"
         },
         body: JSON.stringify({ mobile })
@@ -113,18 +114,18 @@ export default {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "token":this.token
+          token: this.token
         },
         body: JSON.stringify({
           captcha: this.captcha,
           mobile: this.mobile,
-          openId: this.openId
+          openId: this.openid
         })
       })
         .then(res => res.json())
         .then(res => {
           if (res.code === 0) {
-            this.$root.toast.showToast("绑定成功");
+            this.$root.toast.showToast("绑定成功,您可以关闭当前页面");
           } else {
             this.$root.toast.showToast(res.message);
           }
@@ -136,13 +137,18 @@ export default {
           this.$root.load.hide();
         });
     },
-    disBindPhone(){}
+    disBindPhone() {}
   },
   created() {
-    let { openId, token, nickname, headimgurl } = this.$route.query;
-    this.avatar = headimgurl;
+    let { openid, token, nickname, headimgurl } = this.$route.query;
+    if (headimgurl) {
+      this.avatar = headimgurl;
+    } else {
+      this.avatar =
+        "https://xianfengapp.oss-cn-hangzhou.aliyuncs.com/xianfengImages/sprite3/my_avator.png";
+    }
     this.nickName = nickname;
-    this.openId = openId;
+    this.openid = openid;
     this.token = token;
   },
   mounted() {},
@@ -183,7 +189,7 @@ export default {
         border-radius: 50%;
         display: flex;
         justify-content: center;
-        align-self: center;
+        align-items: center;
         img {
           width: 65px;
           height: 65px;
